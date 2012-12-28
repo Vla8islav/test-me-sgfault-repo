@@ -62,7 +62,15 @@ fi
 echo '111'
 exit 0
 
+
+bl_list='url1 filename1
+url2 filename2'
+
 for bl in $bl_list; do
+    bl_url="${bl%% *}"
+    bl_file="${bl#* }"
+    bl_tmp_path="$tmpdir/$bl_file"
+    bl_path="$transm_dir/$bl_file"
     update_bl $bl
     cmp_bl $bl
     upgrade_bl $bl
