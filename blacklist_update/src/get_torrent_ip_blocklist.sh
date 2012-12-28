@@ -60,3 +60,11 @@ else
     /etc/init.d/transmission-daemon start
 fi
 echo '111'
+exit 0
+
+for bl in $bl_list; do
+    update_bl $bl
+    cmp_bl $bl
+    upgrade_bl $bl
+done
+
