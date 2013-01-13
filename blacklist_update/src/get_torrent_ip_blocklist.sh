@@ -32,7 +32,6 @@ update_blacklist()
     fi
 }
 
-#retval=0
 tmpfolder='/tmp/ip_torrent_blacklist'
 blacklist_dir='/var/lib/transmission-daemon/info/blocklists'
 
@@ -41,16 +40,13 @@ second_block_list_name='blocklist2.txt'
 third_block_list_name='blocklist3.txt'
 rm -rf "$tmpfolder" && mkdir "$tmpfolder"
 
-update_blacklist 'http://list.iblocklist.com/?list=bt_level1&fileformat=p2p&archiveforma$' $first_block_list_name $tmpfolder $blacklist_dir
-rez1=$?
-update_blacklist 'http://list.iblocklist.com/?list=bt_level2&fileformat=p2p&archiveforma$' $second_block_list_name $tmpfolder $blacklist_dir
-rez2=$?
-update_blacklist 'http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveforma$' $third_block_list_name $tmpfolder $blacklist_dir
-rez3=$?
-echo '1'
-let "retval = rez1 + rez2 + rez3" && echo '11'
-echo "$retval"
-if [ "0" = "$retval" ]; then
+retval=0
+
+update_blacklist 'http://list.iblocklist.com/?list=bt_level1&fileformat=p2p&archiveforma$' $first_block_list_name $tmpfolder $blacklist_dir  || retval=$?
+update_blacklist 'http://list.iblocklist.com/?list=bt_level2&fileformat=p2p&archiveforma$' $second_block_list_name $tmpfolder $blacklist_dir || retval=$?
+update_blacklist 'http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveforma$' $third_block_list_name $tmpfolder $blacklist_dir || retval=$?
+
+if [ 0 = $retval ]; then
     echo 'All files already up to date, no restart necessary.'
 else
     echo 'Blacklist updated. Need to restart Transmission daemon.'
@@ -59,4 +55,3 @@ else
     echo 'Starting transmission...'
     /etc/init.d/transmission-daemon start
 fi
-echo '111'
